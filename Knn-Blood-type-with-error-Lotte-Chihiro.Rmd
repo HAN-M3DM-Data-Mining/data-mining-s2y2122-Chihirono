@@ -15,8 +15,6 @@ library(tidyverse)
 library(googlesheets4)
 library(class)
 library(caret)
-install.packages("mosaic") 
-install.packages("mosaicCalc")
 ```
 
 ------------------------------------------------------------------------
@@ -128,3 +126,47 @@ confusionMatrix(cleanDF_test_pred, testDF_labels[[1]], positive = NULL, dnn = c(
 ```
 
 reviewer adds suggestions for improving the model
+
+## line 54
+Wrong line:
+```{r}
+cleanDF$Category <- factor(cleanDF$Category, levels = c("0=Blood Donor", "0s=suspect Blood Donor","1=Hepatitis","2=Fibrosis","3=Cirrhosis"), labels = c("Blood Donor","suspect Blood Donor","Hepatitis","Fibrosis", "")) 
+```
+Needs to be:
+```{r}
+cleanDF$Category <- factor(cleanDF$Category, levels = c("0=Blood Donor", "0s=suspect Blood Donor","1=Hepatitis","2=Fibrosis","3=Cirrhosis"), labels = c("Blood Donor","suspect Blood Donor","Hepatitis","Fibrosis","Cirrhosis"))
+```
+-> misses "Cirrhosis" in labels = c()
+
+## line 100
+Wrong line:
+```{r}
+cleanDF_n <- sapply(3:nCols, function(){normalize(cleanDF[,x])}) %>% as.data.frame(
+```
+Needs to be:
+```{r}
+cleanDF_n <- sapply(4:nCols, function(x){normalize(cleanDF[,x])}) %>% as.data.frame
+```
+-> misses x in function() and sapply(3:nCols, needs to be sapply(4:nCols
+
+## line 102
+Wrong line:
+```{r}
+summary(cleanDF_n[c("V1","V2","V3",,"V5","V6","V7","V8","V9","V10")])
+```
+Needs to be:
+```{r}
+summary(cleanDF_n[c("V1","V2","V3","V4","V5","V6","V7","V8","V9","V10")])
+```
+-> misses "V4" in cleanDF_n[c()]
+
+## line 125
+Wrong line:
+```{r}
+confusionMatrix(cleanDF_test_pred, testDF_labels[[1]], positive = NULL, dnn = c("Prediction", "True"))
+```
+Needs to be:
+```{r}
+confusionMatrix(cleanDF_test_pred, testDF_labels, positive = NULL, dnn = c("Prediction", "True"))
+```
+-> [[1]] needs to be removed. The [[1]] makes the names uneven and that's why it can't run.
